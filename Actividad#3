@@ -1,0 +1,56 @@
+// C++ code
+//
+// Definimos los pines de los sensores
+const int pinHumedadSuelo = A0;
+const int pinTemp = A1;
+
+// Variables para almacenar los valores leídos
+int valorHumedad;
+float valorTemp;
+float temperaturaC;
+
+void setup() {
+  // Iniciamos la comunicación serial
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Leer el valor del sensor de humedad de suelo
+  valorHumedad = analogRead(pinHumedadSuelo);
+  // Escalar el valor de humedad de 0-1023 a 0-100%
+  float humedadPorcentaje = map(valorHumedad, 0, 1023, 0, 100);
+
+  // Leer el valor del sensor TMP36
+  valorTemp = analogRead(pinTemp);
+  // Convertir el valor analógico a voltaje (en milivoltios)
+  float voltaje = valorTemp * (5000.0 / 1023.0);
+  // Convertir el voltaje a temperatura en grados Celsius
+  temperaturaC = (voltaje - 500.0) / 10.0;
+
+  // Mostrar los valores en el monitor serial
+  Serial.println("Moreira Rodriguez Luis");
+  Serial.println("------------------------");
+  // Humedad del suelo
+  Serial.print("Humedad del suelo: ");
+  Serial.print(humedadPorcentaje);
+  Serial.println("%");
+  Serial.println("------------------------");
+
+  // Temperatura
+  Serial.print("Temperatura: ");
+  Serial.print(temperaturaC);
+  Serial.println("C");
+  Serial.println("------------------------");
+
+  // Mostrar mensaje de espera
+  Serial.println("Espere 15 segundos por favor para la proxima lectura");
+
+  // Esperar 15 segundos con un contador dinámico
+  for (int i = 0; i < 15; i++) {
+    Serial.print("=");
+    delay(1000); // Esperar 1 segundo
+  }
+  
+  // Imprimir una nueva línea después del conteo
+  Serial.println();
+}
