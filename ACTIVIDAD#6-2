@@ -1,0 +1,92 @@
+// Code C++
+// MORERIA RODRIGUEZ LUIS
+
+// Definimos los pines de los sensores
+const int pinHumedadSuelo = A0;
+const int pinTemp = A1;
+
+// Variables para almacenar los valores leídos
+int valorHumedad;
+float valorTemp;
+float temperaturaC;
+float sumaTemperatura = 0;
+int numMediciones = 0;
+float humedadPorcentaje = 0;
+
+// Variable para controlar el tiempo
+unsigned long tiempoAnterior = 0;
+const long intervalo = 10000; // Intervalo de 10 segundos
+
+void setup() {
+  // Iniciamos la comunicación serial
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Obtener el tiempo actual
+  unsigned long tiempoActual = millis();
+
+  // Verificar si ha pasado el intervalo de tiempo
+  if (tiempoActual - tiempoAnterior >= intervalo) {
+    // Guardar el tiempo actual como el último tiempo de ejecución
+    tiempoAnterior = tiempoActual;
+
+    // Llamar a la función que maneja la lectura y muestra de datos
+    manejarLecturaYMuestra();
+  }
+}
+
+void manejarLecturaYMuestra() {
+  // Leer los sensores y calcular la temperatura y la humedad
+  leerSensores();
+
+  // Mostrar los valores en el monitor serial
+  mostrarDatos();
+
+  // Mostrar mensaje de espera
+  Serial.println("Espere 10 segundos por favor para la proxima lectura");
+
+  // Imprimir una línea de separación después del conteo
+  Serial.println("------------------------");
+}
+
+void leerSensores() {
+  // Leer el valor del sensor de humedad de suelo
+  valorHumedad = analogRead(pinHumedadSuelo);
+  // Escalar el valor de humedad de 0-1023 a 0-100%
+  humedadPorcentaje = map(valorHumedad, 0, 1023, 0, 100);
+
+  // Leer el valor del sensor TMP36
+  valorTemp = analogRead(pinTemp);
+  // Convertir el valor analógico a voltaje (en milivoltios)
+  float voltaje = valorTemp * (5000.0 / 1023.0);
+  // Convertir el voltaje a temperatura en grados Celsius
+  temperaturaC = (voltaje - 500.0) / 10.0;
+
+  // Incrementar el número de mediciones y la suma de temperaturas
+  numMediciones++;
+  sumaTemperatura += temperaturaC;
+}
+
+void mostrarDatos() {
+  // Calcular el promedio de temperatura
+  float promedioTemperatura = sumaTemperatura / numMediciones;
+
+  // Imprimir mi nombre
+  Serial.print("MOREIRA RODRIGUEZ LUIS");
+  Serial.println(); // Salto de línea
+  
+  // Mostrar los valores en el monitor serial
+  Serial.print("Numero de mediciones: ");
+  Serial.println(numMediciones);
+  
+  Serial.print("Temperatura actual: ");
+  Serial.print(temperaturaC);
+  Serial.print("C, Promedio de Temperatura: ");
+  Serial.print(promedioTemperatura);
+  Serial.println("C");
+  
+  Serial.print("Humedad del suelo: ");
+  Serial.print(humedadPorcentaje);
+  Serial.println("%");
+}
