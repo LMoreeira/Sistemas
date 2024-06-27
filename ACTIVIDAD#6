@@ -1,0 +1,39 @@
+// Code C++
+//MOREIRA RODRIGUEZ LUIS 
+//
+// Definicion de los pines de los LEDs
+const int led1 = 3;   // LED conectado al pin D3
+const int led2 = 5;   // LED conectado al pin D5
+const int button = 2; // Botón conectado al pin D2
+
+// Variable para indicar si el botón está presionado
+volatile bool buttonPressed = false; 
+
+void setup() {
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
+  pinMode(button, INPUT_PULLUP); // Configurar el pin del botón (Pulsador)
+  
+  // Configurar interrupción en el botón
+  attachInterrupt(digitalPinToInterrupt(button), buttonInterrupt, CHANGE); 
+}
+
+void loop() {
+  if (buttonPressed) {
+    parpadeo(1000); // Parpadeo con una duración de 1 segundo
+  }
+}
+
+void buttonInterrupt() {
+  // Leer el estado del botón y actualizar la variable buttonPressed
+  buttonPressed = digitalRead(button) == LOW;
+}
+
+void parpadeo(int duration) {
+  digitalWrite(led1, HIGH); // Encender el LED1
+  digitalWrite(led2, HIGH); // Encender el LED2
+  delay(duration);          // Esperar la duración especificada
+  digitalWrite(led1, LOW);  // Apagar el LED1
+  digitalWrite(led2, LOW);  // Apagar el LED2
+  delay(duration);          // Esperar la duración especificada
+}
